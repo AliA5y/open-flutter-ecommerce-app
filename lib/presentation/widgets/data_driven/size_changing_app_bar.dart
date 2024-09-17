@@ -1,7 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openflutterecommerce/config/theme.dart';
 import 'package:openflutterecommerce/data/model/filter_rules.dart';
+import 'package:openflutterecommerce/data/model/hashtag.dart';
 import 'package:openflutterecommerce/data/model/sort_rules.dart';
 import 'package:openflutterecommerce/presentation/features/products/products.dart';
 import 'package:openflutterecommerce/presentation/features/products/views/visual_filter.dart';
@@ -17,7 +20,9 @@ class SizeChangingAppBar extends StatelessWidget {
   final VoidCallback onViewChanged;
 
   const SizeChangingAppBar(
-      {required this.title, this.filterRules, this.sortRules,
+      {required this.title,
+      this.filterRules,
+      this.sortRules,
       this.isListView = true,
       required this.onFilterRulesChanged,
       required this.onSortRulesChanged,
@@ -50,16 +55,18 @@ class SizeChangingAppBar extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
                 title ?? 'Loading...',
-                style: Theme.of(context).textTheme.caption,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Container(
               height: 30,
               child: VisualFilter(
-                  filterRules!.hashTags, filterRules!.selectedHashTags,
+                  filterRules?.hashTags ?? [],
+                  filterRules?.selectedHashTags ??
+                      HashMap.from({HashTag(id: 1, title: ''): true}),
                   (updateValue, isSelected) {
-                BlocProvider.of<ProductsBloc>(context).add(
-                    ProductChangeHashTagEvent(updateValue, isSelected));
+                BlocProvider.of<ProductsBloc>(context)
+                    .add(ProductChangeHashTagEvent(updateValue, isSelected));
               }),
             ),
             OpenFlutterViewOptions(
